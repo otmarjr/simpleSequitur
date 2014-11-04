@@ -80,8 +80,8 @@ public class rule {
 
         List<Integer> positionMaximumMatch = new ArrayList<>(items.size());
 
-        for (int i = 0; i < positionMaximumMatch.size(); i++) {
-            positionMaximumMatch.set(i, -1);
+        for (int i = 0; i < items.size(); i++) {
+            positionMaximumMatch.add(i, -1);
         }
         
         Map<List<String>, List<Map.Entry<Integer, Integer>>> substringOccurences;
@@ -172,14 +172,34 @@ public class rule {
         
         while (index < n){
             List<String> containerSubString = positionContainerSubstrings.get(index);
+            int i0 = index;
             
-            List<Map.Entry<Integer, Integer>> occurences = substringOccurences.get(containerSubString);
+            List<Map.Entry<Integer, Integer>> occurences = substringOccurences
+                    .get(containerSubString)
+                    .stream()
+                    .filter(ij -> ij.getKey() >= i0)
+                    .collect(Collectors.toList());
             
             if (occurences.size() > 1){
-                
+                int size = containerSubString.size();
+                List<Map.Entry<Integer,Integer>> adjacent = occurences.stream()
+                        .filter(e -> e.getKey().equals(occurences.indexOf(e)*size))
+                        .collect(Collectors.toList());
+                        
+                if (adjacent.size() > 1){
+                    regex.add("(");
+                    regex.addAll(containerSubString);
+                    regex.add(")+");
+                    index = adjacent.get(adjacent.size() -1).getValue()+1;
+                }
+                else{
+                    regex.addAll(containerSubString);
+                    index = adjacent.get(0).getValue() + 1;
+                }
             }
             else{
                 regex.addAll(containerSubString);
+                index = occurences.get(0).getValue() + 1;
             }
         }
 

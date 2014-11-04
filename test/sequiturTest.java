@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import java.awt.Event;
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -26,6 +27,21 @@ public class sequiturTest {
     }
     
     @Test
-    public void test
+    public void test1Regex(){
+        List<String> input;
+        input = new LinkedList<>();
+        input.add("a");
+        input.add("a");
+        
+        List<String> expected;
+        expected = new LinkedList<>();
+        expected.add("(");
+        expected.add("a");
+        expected.add(")+");
+        
+        List<String> result = rule.convertRepeatedSubstringsToRegex(input);
+        
+        assertEquals(expected, result);
+    }
     
 }

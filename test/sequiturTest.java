@@ -44,6 +44,83 @@ public class sequiturTest {
         assertEquals(expected, result);
     }
     
+    @Test
+    public void testLosThesisChapter5ExampleOuterLoopEquals1Regex(){
+        List<String> input;
+        input = new LinkedList<>();
+        //ABCBCDABCBCBCD
+        input.add("a");
+        input.add("b");
+        input.add("c");
+        input.add("b");
+        input.add("c");
+        input.add("d");
+        
+        List<String> expected;
+        expected = new LinkedList<>();
+        expected.add("a");
+        expected.add("(");
+        expected.add("b");
+        expected.add("c");
+        expected.add(")+");
+        expected.add("d");
+        
+        List<String> result = rule.convertRepeatedSubstringsToRegex(input);
+        
+        assertEquals(expected, result);
+    }
+    
+    @Test
+    public void testMutantLosThesisChapter5ExampleOuterLoopEquals1Regex(){
+        List<String> input;
+        input = new LinkedList<>();
+        //ABCBCDABCBCBCD
+        input.add("a");
+        input.add("b");
+        input.add("c");
+        input.add("e");
+        input.add("b");
+        input.add("c");
+        input.add("d");
+        
+        List<String> expected;
+        expected = new LinkedList<>(input);
+        
+        List<String> result;
+        result = rule.convertRepeatedSubstringsToRegex(input);
+        
+        assertEquals(expected, result);
+    }
+    
+    @Test
+    public void testMutantLosThesisChapter5ExampleOuterLoopEquals2Regex(){
+        List<String> input;
+        input = new LinkedList<>();
+        //ABCBCDABCBCBCD
+        input.add("a");
+        input.add("b");
+        input.add("c");
+        input.add("d");
+        input.add("a");
+        input.add("b");
+        input.add("c");
+        input.add("d");
+        
+        List<String> expected;
+        expected = new LinkedList<>();
+        expected.add("(");
+        expected.add("a");
+        expected.add("b");
+        expected.add("c");
+        expected.add("d");
+        expected.add(")+");
+        
+        List<String> result;
+        result = rule.convertRepeatedSubstringsToRegex(input);
+        
+        assertEquals(expected, result);
+    }
+    
      @Test
     public void testNonRegex(){
         List<String> input;

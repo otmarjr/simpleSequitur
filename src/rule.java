@@ -94,7 +94,7 @@ public class rule {
         while (positionMaximumMatch.stream()
                 .anyMatch(i -> i == -1) && substringSize > 0) {
 
-            for (int i = 0; i < n - 1; i++) {
+            for (int i = 0; i + substringSize < n ; i++) {
 
                 List<String> substringi;
 
@@ -182,8 +182,9 @@ public class rule {
 
                 if (occurences.size() > 1) {
                     int size = containerSubString.size();
+                    int offsetCausedByNonRepeatedItems = regex.size();
                     List<Map.Entry<Integer, Integer>> adjacent = occurences.stream()
-                            .filter(e -> e.getKey().equals(occurences.indexOf(e) * size))
+                            .filter(e -> e.getKey().equals(occurences.indexOf(e) * size + offsetCausedByNonRepeatedItems))
                             .collect(Collectors.toList());
 
                     if (adjacent.size() > 1) {
@@ -197,7 +198,7 @@ public class rule {
                     }
                 } else {
                     regex.addAll(containerSubString);
-                    index = occurences.get(0).getValue() + 1;
+                    index = occurences.get(0).getValue();
                 }
             }
             else{

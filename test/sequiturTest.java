@@ -17,12 +17,41 @@ public class sequiturTest {
     public sequiturTest() {
     }
 
-    //@Test
-    public void testRunSequitur() {
+    @Test
+    public void testSequiturExampleChapter5LosThesis() {
         System.out.println("runSequitur");
-        String expected = "";
-        String result = sequitur.getSequiturRules("ABCBCDABCBCBCD");
+        
+        String input = "ABCBCDABCBCBCD";
+        String expected = "(A(BC)+D)+";
+        
+        System.out.println(sequitur.getSequiturRules(input));
+        
+        String result = sequitur.getGrammarBasedRegex(input);
+        
+        
         System.out.print(result);
+        assertEquals(expected, result);
+    }
+    
+    @Test 
+    public void testMerge(){
+        List<String> input;
+        input = new LinkedList<>();
+        input.add("A(BC)+");
+        input.add("D");
+        input.add("A(BC)+");
+        input.add("BC");
+        input.add("D");
+        
+        List<String> expected;
+        expected = new LinkedList<>();
+        expected.add("A(BC)+");
+        expected.add("D");
+        expected.add("A(BC)+");
+        expected.add("D");
+        
+        List<String> result = rule.mergeRepeatedItemsWithPlusOperator(input);
+        
         assertEquals(expected, result);
     }
     
@@ -91,6 +120,7 @@ public class sequiturTest {
         
         assertEquals(expected, result);
     }
+    
     
     @Test
     public void testMutantLosThesisChapter5ExampleOuterLoopEquals2Regex(){

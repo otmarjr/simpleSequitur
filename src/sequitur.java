@@ -68,39 +68,7 @@ public class sequitur extends java.applet.Applet {
 
     public static String getGrammarBasedRegex(String input) {
         rule r = generateRulesForInput(input);
-        Map<Integer, java.util.List<symbol>> bfs = r.getRulesByBFS();
-        Map<Integer, String> rulesResolutions = new HashMap<>();
-
-        String regex = "";
-
-        for (int i = bfs.keySet().size() - 1; i >= 0; i--) {
-            java.util.List<Integer> indexesToBeResolved = new LinkedList<>();
-            
-            java.util.List<symbol> symbols = bfs.get(i);
-            
-            for (symbol s: symbols){
-                if (s.isNonTerminal()){
-                    rule rs = ((nonTerminal) s).r;
-                    
-                    if (rs.index - i > 1){
-                        indexesToBeResolved.add(rs.index);
-                    }
-                }
-            }
-            
-            java.util.List<String> resolvedSymbols = new LinkedList<>();
-            
-            for (int j = 0;j< symbols.size();j++){
-                if (indexesToBeResolved.contains(j)){
-                    resolvedSymbols.add(rulesResolutions.get(j));
-                }
-                else{
-                    //resolvedSymbols.add(s
-                }
-            }
-         }
-
-        return regex;
+        return ((nonTerminal)r.first()).r.convertRightHandSideToRegex();
     }
 
     public static String getSequiturRules(String input) {

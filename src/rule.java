@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -67,16 +68,46 @@ public class rule {
         return theGuard.p;
     }
 
-    public static List<String> convertRepeatedSubstringsToRegex(List<String> items) {
+    
+    public static List<String> mergeRepeatedItemsWithPlusOperator(List<String> items){
+        
+        
+        if (items.stream().anyMatch(i -> i.contains(")+"))){
+            
+            String firstRepetition = items.stream().filter(i -> i.contains(")+")).findFirst().get();
+            
+            int indexRepetition = items.indexOf(firstRepetition);
+            
+            int initialPositionPattern = firstRepetition.indexOf("(");
+            int finalPositionPattern = firstRepetition.indexOf(")+");
+            String repeatedPattern = firstRepetition.substring(initialPositionPattern + 1, finalPositionPattern);
+            
+            int toMergeIndex = indexRepetition+1;
+            
+            while (toMergeIndex < items.size() && items.get(toMergeIndex).equals(repeatedPattern)){
+                toMergeIndex++;
+            }
+            
+            List<String> before = items.subList(0, indexRepetition+1);
+            List<String> after = mergeRepeatedItemsWithPlusOperator(items.subList(toMergeIndex, items.size()));
+            
+            List<String> merged;
+            merged = new LinkedList<>(before);
+            merged.addAll(after);
+            return merged;
+        }
+        else{
+            return items;
+        }
+        
+    }
+    public static List<String> convertRepeatedSubstringsToRegex(List<String> sequence) {
+        List<String> items = mergeRepeatedItemsWithPlusOperator(sequence);
+        
         List<String> regex = new LinkedList<>();
-
+        
         int n = items.size();
         int substringSize = n / 2;
-        int middleOffset = 0;
-
-        if (n % 2 == 1) {
-            middleOffset = 1;
-        }
 
         List<Integer> positionMaximumMatch = new ArrayList<>(items.size());
 
@@ -216,10 +247,7 @@ public class rule {
         for (symbol sym = this.first(); (!sym.isGuard()); sym = sym.n) {
             if (sym.isNonTerminal()) {
                 nonTerminal nt = (nonTerminal) sym;
-
-                rightHandSide.add("(");
                 rightHandSide.add(nt.r.convertRightHandSideToRegex());
-                rightHandSide.add(")");
             } else {
                 String currentElement;
                 currentElement = Character.toString((char) sym.value);

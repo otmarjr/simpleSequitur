@@ -17,7 +17,7 @@ public class sequiturTest {
     public sequiturTest() {
     }
 
-    @Test
+    //@Test
     public void testRunSequitur() {
         System.out.println("runSequitur");
         String expected = "";
@@ -27,7 +27,7 @@ public class sequiturTest {
     }
     
     @Test
-    public void test1Regex(){
+    public void testSimplestRegex(){
         List<String> input;
         input = new LinkedList<>();
         input.add("a");
@@ -38,6 +38,23 @@ public class sequiturTest {
         expected.add("(");
         expected.add("a");
         expected.add(")+");
+        
+        List<String> result = rule.convertRepeatedSubstringsToRegex(input);
+        
+        assertEquals(expected, result);
+    }
+    
+     @Test
+    public void testNonRegex(){
+        List<String> input;
+        input = new LinkedList<>();
+        input.add("a");
+        input.add("b");
+        
+        List<String> expected;
+        expected = new LinkedList<>();
+        expected.add("a");
+        expected.add("b");
         
         List<String> result = rule.convertRepeatedSubstringsToRegex(input);
         

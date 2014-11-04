@@ -83,16 +83,16 @@ public class rule {
         for (int i = 0; i < items.size(); i++) {
             positionMaximumMatch.add(i, -1);
         }
-        
+
         Map<List<String>, List<Map.Entry<Integer, Integer>>> substringOccurences;
         substringOccurences = new HashMap<>();
-        
+
         Map<Integer, List<String>> positionContainerSubstrings;
-        
+
         positionContainerSubstrings = new LinkedHashMap<>();
-        
+
         while (positionMaximumMatch.stream()
-                .anyMatch(i -> positionMaximumMatch.get(i) == -1)) {
+                .anyMatch(i -> i == -1) && substringSize > 0) {
 
             for (int i = 0; i < n - 1; i++) {
 
@@ -118,7 +118,7 @@ public class rule {
 
                     boolean contiguousUnmatchedKItemsAhead = true;
 
-                    for (int p = i; p < j; p++) {
+                    for (int p = k; p < k + substringSize; p++) {
                         if (positionMaximumMatch.get(p) != -1) {
                             contiguousUnmatchedJItemsAhead = false;
                         }
@@ -141,23 +141,22 @@ public class rule {
                             positionMaximumMatch.set(p, substringSize);
                             positionContainerSubstrings.put(p, substringi);
                         }
-                        
+
                         Map.Entry<Integer, Integer> startEndPositions;
                         startEndPositions = new AbstractMap.SimpleEntry<>(k, k + substringSize);
-                        
-                        if (substringOccurences.containsKey(substringi)){
+
+                        if (substringOccurences.containsKey(substringi)) {
                             substringOccurences.get(substringi).add(startEndPositions);
-                        }
-                        else{
-                            List<Map.Entry<Integer,Integer>> matchIndexes;
+                        } else {
+                            List<Map.Entry<Integer, Integer>> matchIndexes;
                             matchIndexes = new LinkedList<>();
-                            
+
                             Map.Entry<Integer, Integer> ij;
-                            ij = new AbstractMap.SimpleEntry<>(k, k + substringSize);
-                        
+                            ij = new AbstractMap.SimpleEntry<>(i, j);
+
                             matchIndexes.add(ij);
                             matchIndexes.add(startEndPositions);
-                            
+
                             substringOccurences.put(substringi, matchIndexes);
                         }
                     }
@@ -167,39 +166,43 @@ public class rule {
 
             substringSize--;
         }
-        
+
         int index = 0;
-        
-        while (index < n){
-            List<String> containerSubString = positionContainerSubstrings.get(index);
-            int i0 = index;
-            
-            List<Map.Entry<Integer, Integer>> occurences = substringOccurences
-                    .get(containerSubString)
-                    .stream()
-                    .filter(ij -> ij.getKey() >= i0)
-                    .collect(Collectors.toList());
-            
-            if (occurences.size() > 1){
-                int size = containerSubString.size();
-                List<Map.Entry<Integer,Integer>> adjacent = occurences.stream()
-                        .filter(e -> e.getKey().equals(occurences.indexOf(e)*size))
+
+        while (index < n) {
+            if (positionContainerSubstrings.containsKey(index)) {
+                List<String> containerSubString = positionContainerSubstrings.get(index);
+                int i0 = index;
+
+                List<Map.Entry<Integer, Integer>> occurences = substringOccurences
+                        .get(containerSubString)
+                        .stream()
+                        .filter(ij -> ij.getKey() >= i0)
                         .collect(Collectors.toList());
-                        
-                if (adjacent.size() > 1){
-                    regex.add("(");
+
+                if (occurences.size() > 1) {
+                    int size = containerSubString.size();
+                    List<Map.Entry<Integer, Integer>> adjacent = occurences.stream()
+                            .filter(e -> e.getKey().equals(occurences.indexOf(e) * size))
+                            .collect(Collectors.toList());
+
+                    if (adjacent.size() > 1) {
+                        regex.add("(");
+                        regex.addAll(containerSubString);
+                        regex.add(")+");
+                        index = adjacent.get(adjacent.size() - 1).getValue();
+                    } else {
+                        regex.addAll(containerSubString);
+                        index = adjacent.get(0).getValue();
+                    }
+                } else {
                     regex.addAll(containerSubString);
-                    regex.add(")+");
-                    index = adjacent.get(adjacent.size() -1).getValue()+1;
-                }
-                else{
-                    regex.addAll(containerSubString);
-                    index = adjacent.get(0).getValue() + 1;
+                    index = occurences.get(0).getValue() + 1;
                 }
             }
             else{
-                regex.addAll(containerSubString);
-                index = occurences.get(0).getValue() + 1;
+                regex.add(items.get(index));
+                index++;
             }
         }
 

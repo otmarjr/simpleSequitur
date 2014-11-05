@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -51,13 +52,20 @@ public class rule {
 
     // Index used for printing.
     public int index;
-
+    
+    private alphabet alphabet;
+    
     rule() {
         number = numRules;
         numRules++;
         theGuard = new guard(this);
         count = 0;
         index = 0;
+    }
+    
+    rule(alphabet sigma) {
+        this();
+        this.alphabet = sigma;
     }
 
     public symbol first() {
@@ -250,7 +258,7 @@ public class rule {
                 rightHandSide.add(nt.r.convertRightHandSideToRegex());
             } else {
                 String currentElement;
-                currentElement = Character.toString((char) sym.value);
+                currentElement = sym.getValue();
                 rightHandSide.add(currentElement);
             }
         }
@@ -262,56 +270,6 @@ public class rule {
         protoRegex.forEach(e -> regex.append(e));
 
         return regex.toString();
-    }
-
-    public Map<Integer, List<symbol>> getRulesByBFS() {
-        Map<Integer, List<symbol>> bfs = new LinkedHashMap<>();
-        Vector rules = new Vector(numRules);
-
-        int currentLevel = 0;
-
-        rules.addElement(this);
-        rule currentRule;
-        int processedRules = 0;
-        rule referedTo;
-
-        while (processedRules < rules.size()) {
-            currentRule = (rule) rules.elementAt(processedRules);
-            List<symbol> currentLevelSymbols = new LinkedList<>();
-
-            for (symbol sym = currentRule.first(); (!sym.isGuard()); sym = sym.n) {
-                if (sym.isNonTerminal()) {
-                    referedTo = ((nonTerminal) sym).r;
-                    if ((rules.size() > referedTo.index)
-                            && ((rule) rules.elementAt(referedTo.index)
-                            == referedTo)) {
-                        index = referedTo.index;
-                    } else {
-                        index = rules.size();
-                        referedTo.index = index;
-                        rules.addElement(referedTo);
-                    }
-                } else {
-                    /*
-                     if (sym.value == ' ') {
-                     text.append('_');
-                     } else {
-                     if (sym.value == '\n') {
-                     text.append("\\n");
-                     } else {
-                     text.append((char) sym.value);
-                     }
-                     }*/
-                }
-                currentLevelSymbols.add(sym);
-            }
-
-            bfs.put(currentLevel, currentLevelSymbols);
-            currentLevel++;
-            processedRules++;
-        }
-
-        return bfs;
     }
 
     public String getRules() {
@@ -349,13 +307,15 @@ public class rule {
                     text.append('R');
                     text.append(index);
                 } else {
-                    if (sym.value == ' ') {
+                    String symValue = sym.getValue();
+                    
+                    if (symValue == " ") {
                         text.append('_');
                     } else {
-                        if (sym.value == '\n') {
+                        if (symValue == "\n") {
                             text.append("\\n");
                         } else {
-                            text.append((char) sym.value);
+                            text.append(symValue);
                         }
                     }
                 }

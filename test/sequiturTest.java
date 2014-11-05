@@ -24,9 +24,7 @@ public class sequiturTest {
         String input = "ABCBCDABCBCBCD";
         String expected = "(A(BC)+D)+";
         
-        System.out.println(sequitur.getSequiturRules(input));
-        
-        String result = sequitur.getGrammarBasedRegex(input);
+        String result = sequitur.getGrammarBasedRegex(input,null);
         
         
         System.out.print(result);

@@ -17,9 +17,13 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class sequitur extends java.applet.Applet {
 
@@ -53,8 +57,26 @@ public class sequitur extends java.applet.Applet {
         rules.setText(firstRule.getRules());
     }
 
-    public static rule generateRulesForInput(String input) {
-        rule firstRule = new rule();
+    public static Set<String> getDistinctElements(String input, String delimiter){
+        Set<String> elements;
+        
+        if (delimiter != null && !delimiter.equals("")){
+           elements = new HashSet<>(Arrays.asList(delimiter.split(delimiter)));
+        }
+        else{
+            elements  = new HashSet<>(); 
+            for (char c : input.toCharArray()){
+                elements.add(Character.toString(c));
+            }
+        }
+        
+        return elements;
+    }
+    public static rule generateRulesForInput(String input, String delimiter) {
+
+        Set<String> elements = getDistinctElements(input, delimiter);
+        
+        rule firstRule = new rule(alphabet.create(elements));
 
         for (int i = 0; i < input.length(); i++) {
             firstRule.last().
@@ -66,36 +88,12 @@ public class sequitur extends java.applet.Applet {
         return firstRule;
     }
 
-    public static String getGrammarBasedRegex(String input) {
-        rule r = generateRulesForInput(input);
-        return ((nonTerminal)r.first()).r.convertRightHandSideToRegex();
+    public static String getGrammarBasedRegex(String input, String delimiter) {
+        rule r = generateRulesForInput(input, delimiter);
+        return r.convertRightHandSideToRegex();
     }
 
-    public static String getSequiturRules(String input) {
-        rule firstRule = generateRulesForInput(input);
-
-        Map<Integer, java.util.List<symbol>> bfs;
-
-        StringBuilder sb = new StringBuilder();
-        bfs = firstRule.getRulesByBFS();
-
-        bfs.keySet().stream().forEach(rid -> {
-            sb.append(rid + "->");
-            bfs.get(rid).forEach(s -> {
-                sb.append(" ");
-
-                if (s.isNonTerminal()) {
-                    sb.append(((nonTerminal) s).r.index);
-                } else {
-                    sb.append((char) s.value);
-                }
-            });
-        });
-
-        // return firstRule.getRules();
-        return sb.toString();
-    }
-
+    
     public boolean action(Event evt, Object arg) {
         if (evt.target == submit) {
             submit.disable();

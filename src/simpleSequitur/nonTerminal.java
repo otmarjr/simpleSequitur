@@ -1,3 +1,5 @@
+package simpleSequitur;
+
 /*
 This class is part of a Java port of Craig Nevill-Manning's Sequitur algorithm.
 Copyright (C) 1997, 2012 Eibe Frank, Simon Schwarzer

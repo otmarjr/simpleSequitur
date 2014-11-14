@@ -54,9 +54,9 @@ public class rule {
 
     // Index used for printing.
     public int index;
-    
+
     private alphabet alphabet;
-    
+
     rule() {
         number = numRules;
         numRules++;
@@ -64,7 +64,7 @@ public class rule {
         count = 0;
         index = 0;
     }
-    
+
     rule(alphabet sigma) {
         this();
         this.alphabet = sigma;
@@ -78,44 +78,42 @@ public class rule {
         return theGuard.p;
     }
 
-    
-    public static List<String> mergeRepeatedItemsWithPlusOperator(List<String> items){
-        
-        
-        if (items.stream().anyMatch(i -> i.contains(")+"))){
-            
+    public static List<String> mergeRepeatedItemsWithPlusOperator(List<String> items) {
+
+        if (items.stream().anyMatch(i -> i.contains(")+"))) {
+
             String firstRepetition = items.stream().filter(i -> i.contains(")+")).findFirst().get();
-            
+
             int indexRepetition = items.indexOf(firstRepetition);
-            
+
             int initialPositionPattern = firstRepetition.indexOf("(");
             int finalPositionPattern = firstRepetition.indexOf(")+");
             String repeatedPattern = firstRepetition.substring(initialPositionPattern + 1, finalPositionPattern);
-            
-            int toMergeIndex = indexRepetition+1;
-            
-            while (toMergeIndex < items.size() && items.get(toMergeIndex).equals(repeatedPattern)){
+
+            int toMergeIndex = indexRepetition + 1;
+
+            while (toMergeIndex < items.size() && items.get(toMergeIndex).equals(repeatedPattern)) {
                 toMergeIndex++;
             }
-            
-            List<String> before = items.subList(0, indexRepetition+1);
+
+            List<String> before = items.subList(0, indexRepetition + 1);
             List<String> after = mergeRepeatedItemsWithPlusOperator(items.subList(toMergeIndex, items.size()));
-            
+
             List<String> merged;
             merged = new LinkedList<>(before);
             merged.addAll(after);
             return merged;
-        }
-        else{
+        } else {
             return items;
         }
-        
+
     }
+
     public static List<String> convertRepeatedSubstringsToRegex(List<String> sequence) {
         List<String> items = mergeRepeatedItemsWithPlusOperator(sequence);
-        
+
         List<String> regex = new LinkedList<>();
-        
+
         int n = items.size();
         int substringSize = n / 2;
 
@@ -135,7 +133,7 @@ public class rule {
         while (positionMaximumMatch.stream()
                 .anyMatch(i -> i == -1) && substringSize > 0) {
 
-            for (int i = 0; i + substringSize < n ; i++) {
+            for (int i = 0; i + substringSize < n; i++) {
 
                 List<String> substringi;
 
@@ -229,9 +227,17 @@ public class rule {
                             .collect(Collectors.toList());
 
                     if (adjacent.size() > 1) {
-                        regex.add("(");
-                        regex.addAll(containerSubString);
-                        regex.add(")+");
+                        boolean isPrimitiveRepetition = !containerSubString
+                                .get(containerSubString.size()-1)
+                                .contains("+");
+
+                        if (isPrimitiveRepetition) {
+                            regex.add("(");
+                            regex.addAll(containerSubString);
+                            regex.add(")+");
+                        } else {
+                            regex.addAll(containerSubString);
+                        }
                         index = adjacent.get(adjacent.size() - 1).getValue();
                     } else {
                         regex.addAll(containerSubString);
@@ -241,8 +247,7 @@ public class rule {
                     regex.addAll(containerSubString);
                     index = occurences.get(0).getValue();
                 }
-            }
-            else{
+            } else {
                 regex.add(items.get(index));
                 index++;
             }
@@ -310,7 +315,7 @@ public class rule {
                     text.append(index);
                 } else {
                     String symValue = sym.getValue();
-                    
+
                     if (symValue == " ") {
                         text.append('_');
                     } else {

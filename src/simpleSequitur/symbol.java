@@ -36,6 +36,10 @@ public abstract class symbol {
     protected alphabet sigma;
     protected Map<Integer, String> alphabetElementValues;
 
+    public void setAlphabet(alphabet customAlphabet){
+        this.sigma = customAlphabet;
+    }
+    
     public boolean isUsingCustomAlphabet() {
         return this.sigma != null;
     }

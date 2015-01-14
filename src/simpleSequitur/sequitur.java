@@ -74,19 +74,38 @@ public class sequitur extends java.applet.Applet {
         
         return elements;
     }
+    
+    public static java.util.List<String> getDistinctElementsSorted(String input, String delimiter){
+        java.util.List<String> elements;
+        
+        if (delimiter != null && !delimiter.equals("")){
+           elements = new LinkedList<>(Arrays.asList(input.split(delimiter)));
+        }
+        else{
+            elements  = new LinkedList<>(); 
+            for (char c : input.toCharArray()){
+                elements.add(Character.toString(c));
+            }
+        }
+        
+        return elements;
+    }
     public static rule generateRulesForInput(String input, String delimiter) {
 
         Set<String> elements = getDistinctElements(input, delimiter);
         
         rule firstRule = new rule(alphabet.create(elements));
 
-        for (int i = 0; i < input.length(); i++) {
+        java.util.List<String> sortedElements = getDistinctElementsSorted(input,delimiter);
+        
+        for (int i = 0; i < sortedElements.size(); i++) {
+            String curElement = sortedElements.get(i);
             firstRule.last().
-                    insertAfter(new terminal(input.
-                                    charAt(i)));
+                    insertAfter(new terminal(firstRule.sigma().getValue(curElement),firstRule.sigma()));
             firstRule.last().p.check();
         }
 
+        String str = firstRule.getRules();
         return firstRule;
     }
 

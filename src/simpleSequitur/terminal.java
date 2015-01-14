@@ -27,6 +27,13 @@ public class terminal extends symbol implements Cloneable{
     n = null;
   }
   
+  terminal(int theValue,alphabet sigma){
+    value = theValue;
+    p = null;
+    n = null;
+    this.setAlphabet(sigma);
+  }
+  
   public void cleanUp(){
     join(p,n);
     deleteDigram();

@@ -35,6 +35,20 @@ public class sequiturTest {
         assertEquals(expected, result);
     }
     
+    @Test
+    public void testSequiturExampleChapter5LosThesisWithDelimiter() {
+        System.out.println("runSequitur");
+        
+        String input = "A,B,C,B,C,D,A,B,C,B,C,B,C,D";
+        String expected = "(A(BC)+D)+";
+        
+        String result = sequitur.getGrammarBasedRegex(input,",");
+        
+        
+        System.out.print(result);
+        assertEquals(expected, result);
+    }
+    
     @Test 
     public void testMerge(){
         List<String> input;

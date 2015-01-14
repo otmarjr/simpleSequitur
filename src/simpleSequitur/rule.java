@@ -70,6 +70,10 @@ public class rule {
         this.alphabet = sigma;
     }
 
+    public alphabet sigma() {
+        return this.alphabet;
+    }
+    
     public symbol first() {
         return theGuard.n;
     }

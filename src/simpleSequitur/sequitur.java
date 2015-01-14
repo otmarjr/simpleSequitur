@@ -63,7 +63,7 @@ public class sequitur extends java.applet.Applet {
         Set<String> elements;
         
         if (delimiter != null && !delimiter.equals("")){
-           elements = new HashSet<>(Arrays.asList(delimiter.split(delimiter)));
+           elements = new HashSet<>(Arrays.asList(input.split(delimiter)));
         }
         else{
             elements  = new HashSet<>(); 

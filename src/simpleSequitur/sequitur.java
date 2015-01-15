@@ -59,50 +59,51 @@ public class sequitur extends java.applet.Applet {
         rules.setText(firstRule.getRules());
     }
 
-    public static Set<String> getDistinctElements(String input, String delimiter){
+    public static Set<String> getDistinctElements(String input, String delimiter) {
         Set<String> elements;
-        
-        if (delimiter != null && !delimiter.equals("")){
-           elements = new HashSet<>(Arrays.asList(input.split(delimiter)));
-        }
-        else{
-            elements  = new HashSet<>(); 
-            for (char c : input.toCharArray()){
+
+        if (delimiter != null && !delimiter.equals("")) {
+            elements = new HashSet<>(Arrays.asList(input.split(delimiter)));
+        } else {
+            elements = new HashSet<>();
+            for (char c : input.toCharArray()) {
                 elements.add(Character.toString(c));
             }
         }
-        
+
         return elements;
     }
-    
-    public static java.util.List<String> getDistinctElementsSorted(String input, String delimiter){
+
+    public static java.util.List<String> getDistinctElementsSorted(String input, String delimiter) {
         java.util.List<String> elements;
-        
-        if (delimiter != null && !delimiter.equals("")){
-           elements = new LinkedList<>(Arrays.asList(input.split(delimiter)));
-        }
-        else{
-            elements  = new LinkedList<>(); 
-            for (char c : input.toCharArray()){
+
+        if (delimiter != null && !delimiter.equals("")) {
+            elements = new LinkedList<>(Arrays.asList(input.split(delimiter)));
+        } else {
+            elements = new LinkedList<>();
+            for (char c : input.toCharArray()) {
                 elements.add(Character.toString(c));
             }
         }
-        
+
         return elements;
     }
+
     public static rule generateRulesForInput(String input, String delimiter) {
 
         Set<String> elements = getDistinctElements(input, delimiter);
-        
+
         rule firstRule = new rule(alphabet.create(elements));
 
-        java.util.List<String> sortedElements = getDistinctElementsSorted(input,delimiter);
-        
+        java.util.List<String> sortedElements = getDistinctElementsSorted(input, delimiter);
+
         for (int i = 0; i < sortedElements.size(); i++) {
             String curElement = sortedElements.get(i);
-            firstRule.last().
-                    insertAfter(new terminal(firstRule.sigma().getValue(curElement),firstRule.sigma()));
-            firstRule.last().p.check();
+            if (firstRule.sigma().containsElement(curElement)) {
+                firstRule.last().
+                        insertAfter(new terminal(firstRule.sigma().getValue(curElement), firstRule.sigma()));
+                firstRule.last().p.check();
+            }
         }
 
         String str = firstRule.getRules();
@@ -110,11 +111,13 @@ public class sequitur extends java.applet.Applet {
     }
 
     public static String getGrammarBasedRegex(String input, String delimiter) {
+        if (delimiter == null) {
+            delimiter = "";
+        }
         rule r = generateRulesForInput(input, delimiter);
-        return r.convertRightHandSideToRegex();
+        return r.convertRightHandSideToRegex(delimiter);
     }
 
-    
     public boolean action(Event evt, Object arg) {
         if (evt.target == submit) {
             submit.disable();

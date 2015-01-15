@@ -33,6 +33,10 @@ public class alphabet {
         }
     }
 
+    public boolean containsElement(String value){
+        return this.elements.contains(value);
+    }
+    
     public String getValue(int valueCode) {
         return this.elementsValue.getOrDefault(valueCode, null);
     }

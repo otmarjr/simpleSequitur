@@ -40,7 +40,7 @@ public class sequiturTest {
         System.out.println("runSequitur");
         
         String input = "A,B,C,B,C,D,A,B,C,B,C,B,C,D";
-        String expected = "(A(BC)+D)+";
+        String expected = "(A,(B,C)+,D)+";
         
         String result = sequitur.getGrammarBasedRegex(input,",");
         
@@ -48,6 +48,20 @@ public class sequiturTest {
         System.out.print(result);
         assertEquals(expected, result);
     }
+    
+    @Test
+    public void testWithB6411513ClassInput() {
+        System.out.println("B6411513 - DatagramSocket class test");
+        
+        String input = ">java.net.NetworkInterface.Enumeration java.net.NetworkInterface.getNetworkInterfaces() >java.net.NetworkInterface.boolean java.net.NetworkInterface.isUp() >java.net.NetworkInterface.boolean java.net.NetworkInterface.isVirtual() >java.net.NetworkInterface.Enumeration java.net.NetworkInterface.getInetAddresses() >java.net.NetworkInterface.String java.net.NetworkInterface.getName() >new java.net.DatagramSocket.java.net.DatagramSocket(int, InetAddress) >java.net.DatagramSocket.void java.net.DatagramSocket.connect(InetAddress, int) >java.net.DatagramSocket.void java.net.DatagramSocket.disconnect() >java.net.DatagramSocket.InetAddress java.net.DatagramSocket.getLocalAddress() >java.net.DatagramSocket.int java.net.DatagramSocket.getLocalPort() >new java.net.DatagramPacket.java.net.DatagramPacket(byte[], int, InetAddress, int) >java.net.DatagramSocket.void java.net.DatagramSocket.setSoTimeout(int) >java.net.DatagramSocket.void java.net.DatagramSocket.send(DatagramPacket) >java.net.DatagramSocket.void java.net.DatagramSocket.receive(DatagramPacket) >java.net.DatagramSocket.void java.net.DatagramSocket.close() >new java.net.DatagramSocket.java.net.DatagramSocket(int, InetAddress) >java.net.DatagramSocket.void java.net.DatagramSocket.connect(InetAddress, int) >java.net.DatagramSocket.void java.net.DatagramSocket.disconnect() >java.net.DatagramSocket.InetAddress java.net.DatagramSocket.getLocalAddress() >java.net.DatagramSocket.int java.net.DatagramSocket.getLocalPort() >new java.net.DatagramPacket.java.net.DatagramPacket(byte[], int, InetAddress, int) >java.net.DatagramSocket.void java.net.DatagramSocket.setSoTimeout(int) >java.net.DatagramSocket.void java.net.DatagramSocket.send(DatagramPacket) >java.net.DatagramSocket.void java.net.DatagramSocket.receive(DatagramPacket) >java.net.DatagramSocket.void java.net.DatagramSocket.close()";
+        
+        String result = sequitur.getGrammarBasedRegex(input," >");
+        
+        
+        System.out.print(result);
+        assertNotNull(result);
+    }
+    
     
     @Test 
     public void testMerge(){
@@ -80,9 +94,7 @@ public class sequiturTest {
         
         List<String> expected;
         expected = new LinkedList<>();
-        expected.add("(");
-        expected.add("a");
-        expected.add(")+");
+        expected.add("(a)+");
         
         List<String> result = rule.convertRepeatedSubstringsToRegex(input);
         
@@ -104,10 +116,8 @@ public class sequiturTest {
         List<String> expected;
         expected = new LinkedList<>();
         expected.add("a");
-        expected.add("(");
-        expected.add("b");
-        expected.add("c");
-        expected.add(")+");
+        expected.add("(b");
+        expected.add("c)+");
         expected.add("d");
         
         List<String> result = rule.convertRepeatedSubstringsToRegex(input);
@@ -154,12 +164,10 @@ public class sequiturTest {
         
         List<String> expected;
         expected = new LinkedList<>();
-        expected.add("(");
-        expected.add("a");
+        expected.add("(a");
         expected.add("b");
         expected.add("c");
-        expected.add("d");
-        expected.add(")+");
+        expected.add("d)+");
         
         List<String> result;
         result = rule.convertRepeatedSubstringsToRegex(input);

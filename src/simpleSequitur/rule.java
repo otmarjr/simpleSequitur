@@ -73,7 +73,7 @@ public class rule {
     public alphabet sigma() {
         return this.alphabet;
     }
-    
+
     public symbol first() {
         return theGuard.n;
     }
@@ -114,6 +114,10 @@ public class rule {
     }
 
     public static List<String> convertRepeatedSubstringsToRegex(List<String> sequence) {
+        return convertRepeatedSubstringsToRegex(sequence, "");
+    }
+
+    public static List<String> convertRepeatedSubstringsToRegex(List<String> sequence, String delimiter) {
         List<String> items = mergeRepeatedItemsWithPlusOperator(sequence);
 
         List<String> regex = new LinkedList<>();
@@ -232,20 +236,27 @@ public class rule {
 
                     if (adjacent.size() > 1) {
                         boolean isPrimitiveRepetition = !containerSubString
-                                .get(containerSubString.size()-1)
+                                .get(containerSubString.size() - 1)
                                 .contains("+");
 
                         if (isPrimitiveRepetition) {
-                            regex.add("(");
+                            String first = "(" + containerSubString.get(0);
+                            containerSubString.set(0, first);
+                            int lastIndex = containerSubString.size()-1;
+                            String last = containerSubString.get(lastIndex) + ")+";
+                            containerSubString.set(lastIndex, last);
                             regex.addAll(containerSubString);
-                            regex.add(")+");
                         } else {
                             regex.addAll(containerSubString);
                         }
                         index = adjacent.get(adjacent.size() - 1).getValue();
                     } else {
                         regex.addAll(containerSubString);
-                        index = adjacent.get(0).getValue();
+                        if (adjacent.size() > 0) {
+                            index = adjacent.get(0).getValue();
+                        } else {
+                            index++;
+                        }
                     }
                 } else {
                     regex.addAll(containerSubString);
@@ -260,13 +271,13 @@ public class rule {
         return regex;
     }
 
-    public String convertRightHandSideToRegex() {
+    public String convertRightHandSideToRegex(String delimiter) {
         List<String> rightHandSide = new LinkedList<>();
 
         for (symbol sym = this.first(); (!sym.isGuard()); sym = sym.n) {
             if (sym.isNonTerminal()) {
                 nonTerminal nt = (nonTerminal) sym;
-                rightHandSide.add(nt.r.convertRightHandSideToRegex());
+                rightHandSide.add(nt.r.convertRightHandSideToRegex(delimiter));
             } else {
                 String currentElement;
                 currentElement = sym.getValue();
@@ -274,13 +285,13 @@ public class rule {
             }
         }
 
-        List<String> protoRegex = convertRepeatedSubstringsToRegex(rightHandSide);
+        List<String> protoRegex = convertRepeatedSubstringsToRegex(rightHandSide, delimiter);
 
-        StringBuilder regex = new StringBuilder();
+        return protoRegex.stream().collect(Collectors.joining(delimiter));
+    }
 
-        protoRegex.forEach(e -> regex.append(e));
-
-        return regex.toString();
+    public String convertRightHandSideToRegex() {
+        return convertRightHandSideToRegex("");
     }
 
     public String getRules() {
